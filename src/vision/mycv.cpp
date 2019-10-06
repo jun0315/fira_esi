@@ -138,6 +138,7 @@ MYCV::MYCV(int flag, ros::NodeHandle *pnh)
 #ifdef TEST
                 printf("can't open zed\n");
 #endif
+                //无法打开zed，打开前置摄像头
                 camera_number = getoneint("forward_camera");
                 vc.open(camera_number);
             }
@@ -393,22 +394,7 @@ void MYCV::cvmain()
 #endif
 
 #ifdef TEST_ROS
-    static image_transport::ImageTransport it(*nh);
-    static image_transport::Publisher pub0 = it.advertise("vision/out/downcamera", 1);
-    static image_transport::Publisher pub1 = it.advertise("vision/out/forwardcamera", 1);
-    std_msgs::Header header;
-    header.seq = 0;
-    header.stamp = ros::Time::now();
-    header.frame_id = "image"+int2str(camera_type);
-    sensor_msgs::ImagePtr msg = cv_bridge::CvImage(header, "bgr8", outimage).toImageMsg();
-    if(camera_type == DOWN_CAMERA)
-    {
-        pub0.publish(msg);
-    }
-    else if(camera_type == FORWARD_CAMERA)
-    {
-        pub1.publish(msg);
-    }
+    publishForCamera(outimage);
 #endif
 #endif
 }
@@ -1675,4 +1661,24 @@ void MYCV::QR_code()
 
     fclose(origin);
     fclose(result);
+}
+
+void MYCV::publishForCamera(cv::Mat outImage)
+{
+    static image_transport::ImageTransport it(*nh);
+    static image_transport::Publisher pub0 = it.advertise("vision/out/downcamera", 1);
+    static image_transport::Publisher pub1 = it.advertise("vision/out/forwardcamera", 1);
+    std_msgs::Header header;
+    header.seq = 0;
+    header.stamp = ros::Time::now();
+    header.frame_id = "image"+int2str(camera_type);
+    sensor_msgs::ImagePtr msg = cv_bridge::CvImage(header, "bgr8", outImage).toImageMsg();
+    if(camera_type == DOWN_CAMERA)
+    {
+        pub0.publish(msg);
+    }
+    else if(camera_type == FORWARD_CAMERA)
+    {
+        pub1.publish(msg);
+    }
 }

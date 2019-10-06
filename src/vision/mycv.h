@@ -42,7 +42,6 @@ public:
     virtual ~MYCV();
     void cvmain();
     void destory();
-    ros::NodeHandle *nh;
 
     void QR_code();
 
@@ -95,6 +94,7 @@ private:
     bool flag_first_findredX;
 
 private:
+    ros::NodeHandle *nh;
     std::string param_topic;
     std::string param_path;
     int camera_type;
@@ -133,6 +133,7 @@ private:
     void color_test3();
 
 private:
+    void publishForCamera(cv::Mat outImage);
     int getoneint(std::string name);
     cv::Scalar getScalar(std::string name);
     std::string int2str(int val);
