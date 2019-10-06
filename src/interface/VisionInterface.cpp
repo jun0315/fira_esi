@@ -8,8 +8,8 @@
 vwpp::VisionInterface::VisionInterface()
 {
     nh = ros::NodeHandle();
-    forward_camera = new MYCV(Forward_Camera, &nh);
-    down_camera = new MYCV(Down_Camera, &nh);
+    forward_camera = new MYCV(FORWARD_CAMERA, &nh);
+    down_camera = new MYCV(DOWN_CAMERA, &nh);
 }
 
 

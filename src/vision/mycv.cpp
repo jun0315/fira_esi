@@ -105,14 +105,10 @@ MYCV::MYCV(int flag, ros::NodeHandle *pnh)
 
     int camera_number = -1;
 
-    if(flag == Down_Camera)
+    if(flag == DOWN_CAMERA)
     {
         camera_number = getoneint("down_camera");
         vc.open(camera_number);
-        //vc.set(CV_CAP_PROP_FRAME_WIDTH, 1280.0);
-        //vc.set(CV_CAP_PROP_FRAME_HEIGHT, 720.0);
-        //vc.set(CV_CAP_PROP_FRAME_WIDTH, 1920.0);
-        //vc.set(CV_CAP_PROP_FRAME_HEIGHT, 1080.0);
         flag_findline       =   true;
         flag_findgate       =   false;
         flag_findQR         =   true;
@@ -120,7 +116,7 @@ MYCV::MYCV(int flag, ros::NodeHandle *pnh)
         flag_findredX       =   true;
         flag_findtower      =   false;
     }
-    else if(flag == Forward_Camera)
+    else if(flag == FORWARD_CAMERA)
     {
         sl::InitParameters zed_param;
         zed_param.camera_resolution         = sl::RESOLUTION_VGA;
@@ -283,11 +279,11 @@ void MYCV::cvmain()
 {
     cv::Mat image;
 
-    if(camera_type == Down_Camera)
+    if(camera_type == DOWN_CAMERA)
     {
         vc >> image;
     }
-    else if(camera_type == Forward_Camera)
+    else if(camera_type == FORWARD_CAMERA)
     {
         if(zed.isOpened())
         {
@@ -318,7 +314,7 @@ void MYCV::cvmain()
         return;
     }
 
-    if(camera_type == Forward_Camera)
+    if(camera_type == FORWARD_CAMERA)
     {
         static int count = 0;
         if(count++ % 3 !=0)
@@ -405,11 +401,11 @@ void MYCV::cvmain()
     header.stamp = ros::Time::now();
     header.frame_id = "image"+int2str(camera_type);
     sensor_msgs::ImagePtr msg = cv_bridge::CvImage(header, "bgr8", outimage).toImageMsg();
-    if(camera_type == Down_Camera)
+    if(camera_type == DOWN_CAMERA)
     {
         pub0.publish(msg);
     }
-    else if(camera_type == Forward_Camera)
+    else if(camera_type == FORWARD_CAMERA)
     {
         pub1.publish(msg);
     }
@@ -572,7 +568,7 @@ void MYCV::findQR(cv::Mat image)
 {
     cv::cvtColor(image, image, CV_BGR2GRAY);
 
-    if(camera_type == Forward_Camera && (image.cols!=672 || image.rows!=376))
+    if(camera_type == FORWARD_CAMERA && (image.cols!=672 || image.rows!=376))
     {
         cv::resize(image,image,cv::Size(672,376));
     }
@@ -619,7 +615,7 @@ void MYCV::findQR(cv::Mat image)
         detect_QR = false;
         QR_inform = "";
     }
-    else if(camera_type == Down_Camera && fabs(QR_location[0])<QR_rect_size && fabs(QR_location[1])<QR_rect_size)
+    else if(camera_type == DOWN_CAMERA && fabs(QR_location[0])<QR_rect_size && fabs(QR_location[1])<QR_rect_size)
     {
         detect_QR = true;
         QR_inform = inform[0];
@@ -638,7 +634,7 @@ void MYCV::findQR(cv::Mat image)
                 cv::Point(outimage.cols/2+QR_rect_size, outimage.rows/2+QR_rect_size), cv::Scalar(255,255,0));
 #endif
     }
-    else if(camera_type == Forward_Camera && !inform.empty())
+    else if(camera_type == FORWARD_CAMERA && !inform.empty())
     {
         FILE* tower_inform = fopen("../tower_inform", "a+");
         for(unsigned int i=0; i<inform.size(); i++)
@@ -1516,7 +1512,7 @@ void MYCV::destory()
         zed.close();
     }
 
-    if(camera_type == Forward_Camera)
+    if(camera_type == FORWARD_CAMERA)
     {
         FILE* origin = fopen("../tower_inform", "r");
         FILE* result = fopen("../tower_inform_result", "w");

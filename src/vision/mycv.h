@@ -30,9 +30,9 @@
 
 enum CameraNumber
 {
-    No_Camera = -1,
-    Down_Camera = 0,
-    Forward_Camera = 1
+    NO_CAMERA = -1,
+    DOWN_CAMERA = 0,
+    FORWARD_CAMERA = 1
 };
 
 class MYCV
