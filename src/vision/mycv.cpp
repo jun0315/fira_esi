@@ -308,47 +308,12 @@ void MYCV::cvmain()
                 flag_zed_left_image = false;
             }
         }
+        savaImage(image);
     }
 
     if(image.empty())
     {
         return;
-    }
-
-    if(camera_type == FORWARD_CAMERA)
-    {
-        static int count = 0;
-        if(count++ % 3 !=0)
-        {
-            return;
-        }
-
-        static std::string ss = "000001";
-        if(ss[0] > '9')
-        {
-            ROS_ERROR("File QR_code is full");
-            return;
-        }
-
-#ifdef TEST
-        printf("save image %s.bmp\n\n", ss.c_str());
-#endif
-        // cv::resize(image,image,cv::Size(640,360));
-        cv::imwrite("../QR_code/"+ss+".jpg", image);
-
-        FILE* tower_inform = fopen("../QR_code/tower_inform", "a+");
-        fprintf(tower_inform, "%d.%d: %s\n", ros::Time::now().sec, ros::Time::now().nsec, ss.c_str());
-        fclose(tower_inform);
-
-        ss[ss.size()-1]++;
-        for(int i=ss.size()-1; i>=0; i--)
-        {
-            if(ss[i]>'9')
-            {
-                ss[i]-=10;
-                ss[i-1]++;
-            }
-        }
     }
 
     outimage = image.clone();
@@ -1680,5 +1645,41 @@ void MYCV::publishForCamera(cv::Mat outImage)
     else if(camera_type == FORWARD_CAMERA)
     {
         pub1.publish(msg);
+    }
+}
+
+void MYCY::saveImage(cv::Mat image)
+{
+    static int count = 0;
+    if(count++ % 3 !=0)
+    {
+        return;
+    }
+
+    static std::string ss = "000001";
+    if(ss[0] > '9')
+    {
+        ROS_ERROR("File QR_code is full");
+        return;
+    }
+
+#ifdef TEST
+    printf("save image %s.bmp\n\n", ss.c_str());
+#endif
+    // cv::resize(image,image,cv::Size(640,360));
+    cv::imwrite("../QR_code/"+ss+".jpg", image);
+
+    FILE* tower_inform = fopen("../QR_code/tower_inform", "a+");
+    fprintf(tower_inform, "%d.%d: %s\n", ros::Time::now().sec, ros::Time::now().nsec, ss.c_str());
+    fclose(tower_inform);
+
+    ss[ss.size()-1]++;
+    for(int i=ss.size()-1; i>=0; i--)
+    {
+        if(ss[i]>'9')
+        {
+            ss[i]-=10;
+            ss[i-1]++;
+        }
     }
 }

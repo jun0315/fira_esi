@@ -15,6 +15,7 @@
 
 #include <cv_bridge/cv_bridge.h>
 #include <image_transport/image_transport.h>
+
 #ifdef TEST
 #ifdef TEST_ROS_DY
 #include <dynamic_reconfigure/server.h>
@@ -28,35 +29,47 @@
 #include <fstream>
 
 
-enum CameraNumber
-{
+enum CameraNumber {
     NO_CAMERA = -1,
     DOWN_CAMERA = 0,
     FORWARD_CAMERA = 1
 };
 
-class MYCV
-{
+class MYCV {
 public:
-    MYCV(int flag, ros::NodeHandle* pnh);
+    MYCV(int flag, ros::NodeHandle *pnh);
+
     virtual ~MYCV();
+
     void cvmain();
+
     void destory();
 
     void QR_code();
 
 public:
     void open_findline();
+
     void close_findline();
+
     void open_findgate();
+
     void close_findgate();
+
     void open_findQR();
+
     void close_findQR();
+
     void open_findblueH();
+
     void close_findblueH();
+
     void open_findredX();
+
     void close_findredX();
+
     void open_findtower();
+
     void close_findtower();
 
     bool flag_open_write;
@@ -111,41 +124,62 @@ private:
 
     std::string zed_left_topic;
     std::string zed_depth_topic;
-    image_transport::ImageTransport* it;
+    image_transport::ImageTransport *it;
     image_transport::Subscriber sub_left;
     cv::Mat image_depth;
 
 private:
     void findline(cv::Mat image);
+
     void findgate(cv::Mat image);
+
     void findQR(cv::Mat image);
+
     void findblueH(cv::Mat image);
+
     void findredX(cv::Mat image);
+
     void findtower(cv::Mat image);
+
     cv::Point3d color_thing(cv::Mat image, cv::Scalar min_color, cv::Scalar max_color, std::string name);
+
     void Proc_image(cv::Mat &thresholdimage);
+
     void resetpoint(double point[], cv::Mat image);
+
     void check();
+
     void color_test();
+
     void check2();
+
     void color_test2();
+
     void check3();
+
     void color_test3();
 
 private:
     void publishForCamera(cv::Mat outImage);
+
+    void saveImage(cv::Mat image);
+
     int getoneint(std::string name);
+
     cv::Scalar getScalar(std::string name);
+
     std::string int2str(int val);
+
     void setoneint(int x, std::string name);
+
     void setScalar(cv::Scalar color, std::string name);
 
 #ifdef TEST
-    #ifdef TEST_ROS
+#ifdef TEST_ROS
 #ifdef TEST_ROS_DY
-private:
-    dynamic_reconfigure::Server<dynamic_reconfigure::vision_dynamic_reconfigureConfig> *server;
-    dynamic_reconfigure::Server<dynamic_reconfigure::vision_dynamic_reconfigureConfig>::CallbackType *server_callback;
+    private:
+        dynamic_reconfigure::Server<dynamic_reconfigure::vision_dynamic_reconfigureConfig> *server;
+        dynamic_reconfigure::Server<dynamic_reconfigure::vision_dynamic_reconfigureConfig>::CallbackType *server_callback;
 #endif
 #endif
 #endif
