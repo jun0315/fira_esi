@@ -441,6 +441,7 @@ void MYCV::findgate(cv::Mat image)
     yellow = color_thing(image, min_color[0], max_color[0], "yellow");
     red = color_thing(image, min_color[1], max_color[1], "red");
 
+    //获取黄色门相关坐标
     static std::vector<bool> detect_yellow(5, false);
     for(unsigned int i=0; i<detect_yellow.size()-1; i++)
     {
@@ -477,6 +478,7 @@ void MYCV::findgate(cv::Mat image)
         }
     }
 
+    //获取红色门相关代码
     static std::vector<bool> detect_red(5, false);
     for(unsigned int i=0; i<detect_red.size()-1; i++)
     {
@@ -863,21 +865,8 @@ void MYCV::findtower(cv::Mat image)
 #endif
 #endif
 #endif
-
-    std::vector<std::vector<cv::Point> > contours;
-    cv::findContours(thresholdimage, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
-
-    std::vector<std::vector<cv::Point> > convexHulls(contours.size());
-    for(unsigned int i = 0; i < contours.size(); i++)
-    {
-        cv::convexHull(contours[i], convexHulls[i]);
-    }
-
     std::vector<cv::Rect> rect_array;
-    for(unsigned int i = 0; i < convexHulls.size(); i++)
-    {
-        rect_array.push_back(cv::boundingRect(convexHulls[i]));
-    }
+    rect_array = getRectFromImage(thresholdimage);
 
     for(unsigned int i = 0; i < rect_array.size(); i++)
     {
@@ -1018,21 +1007,8 @@ cv::Point3d MYCV::color_thing(cv::Mat image, cv::Scalar min_color, cv::Scalar ma
 #endif
 #endif
 #endif
-
-    std::vector<std::vector<cv::Point> > contours;
-    cv::findContours(thresholdimage, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
-
-    std::vector<std::vector<cv::Point> > convexHulls(contours.size());
-    for(unsigned int i = 0; i < contours.size(); i++)
-    {
-        cv::convexHull(contours[i], convexHulls[i]);
-    }
-
     std::vector<cv::Rect> rect_array;
-    for(unsigned int i = 0; i < convexHulls.size(); i++)
-    {
-        rect_array.push_back(cv::boundingRect(convexHulls[i]));
-    }
+    rect_array = getRectFromImage(thresholdimage);
 
     for(unsigned int i = 0; i < rect_array.size(); i++)
     {
@@ -1682,4 +1658,23 @@ void MYCY::saveImage(cv::Mat image)
             ss[i-1]++;
         }
     }
+}
+
+std::vector<cv::Rect> MYCV::getRectFromImage(cv::Mat Image)
+{
+    std::vector<std::vector<cv::Point> > contours;
+    cv::findContours(Image, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+
+    std::vector<std::vector<cv::Point> > convexHulls(contours.size());
+    for(unsigned int i = 0; i < contours.size(); i++)
+    {
+        cv::convexHull(contours[i], convexHulls[i]);
+    }
+
+    std::vector<cv::Rect> rect_array;
+    for(unsigned int i = 0; i < convexHulls.size(); i++)
+    {
+        rect_array.push_back(cv::boundingRect(convexHulls[i]));
+    }
+    return rect_array;
 }

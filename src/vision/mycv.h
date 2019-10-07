@@ -164,6 +164,8 @@ private:
 
     void saveImage(cv::Mat image);
 
+    std::vector<cv::Rect> getRectFromImage(cv::Mat Image);
+
     int getoneint(std::string name);
 
     cv::Scalar getScalar(std::string name);
